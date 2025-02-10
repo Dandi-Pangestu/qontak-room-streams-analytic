@@ -1,0 +1,33 @@
+--- RESET ---
+
+kafka-streams-application-reset \
+  --application-id room-streams-analytic-dev \
+  --input-topics qontak_chat.public.rooms \
+  --bootstrap-servers kafka:9092
+
+kafka-streams-application-reset \
+  --application-id room-streams-analytic-dev \
+  --input-topics room-streams-analytic-dev-room-status-events-changelog \
+  --bootstrap-servers kafka:9092
+
+--- RESET ---
+
+
+--- CONSUME ---
+
+kafka-console-consumer --bootstrap-server kafka:9092 \
+  --topic room-streams-analytic-dev-room-status-events-changelog \
+  --from-beginning \
+  --property print.key=true
+
+kafka-console-consumer --bootstrap-server kafka:9092 \
+  --topic organization-room-status \
+  --from-beginning \
+  --property print.key=true
+
+kafka-console-consumer --bootstrap-server kafka:9092 \
+  --topic room-status-count \
+  --from-beginning
+
+--- CONSUME ---
+

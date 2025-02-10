@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Room Status</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .status-column {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 30%;
+        }
+        .status-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .assigned { background-color: #4CAF50; color: white; }
+        .unassigned { background-color: #f39c12; color: white; }
+        .resolved { background-color: #3498db; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>Real-Time Room Status</h1>
+<div class="container">
+    <div class="status-column">
+        <div class="status-title">Assigned</div>
+        <div id="assigned" class="status-value assigned">0</div>
+    </div>
+
+    <div class="status-column">
+        <div class="status-title">Unassigned</div>
+        <div id="unassigned" class="status-value unassigned">0</div>
+    </div>
+
+    <div class="status-column">
+        <div class="status-title">Resolved</div>
+        <div id="resolved" class="status-value resolved">0</div>
+    </div>
+</div>
+
+<script>
+    const socket = new SockJS('http://localhost:8090/ws');  // Connect to STOMP WebSocket endpoint
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function () {
+        console.log("Connected to WebSocket");
+
+        // Subscribe to real-time room status updates
+        stompClient.subscribe('/topic/room-status-count/bd30d58a-f5a1-4285-bc0e-b13d272d3a55', function (message) {
+            const data = JSON.parse(message.body);
+            if (data.status === 'assigned') {
+                updateStatus('assigned', data.value);
+            }
+
+            if (data.status === 'unassigned') {
+                updateStatus('unassigned', data.value);
+            }
+
+            if (data.status === 'resolved') {
+                updateStatus('resolved', data.value);
+            }
+        });
+    });
+
+    function updateStatus(statusType, count) {
+        const element = document.getElementById(statusType);
+        element.textContent = count !== undefined ? count : 0;
+    }
+</script>
+
+</body>
+</html>

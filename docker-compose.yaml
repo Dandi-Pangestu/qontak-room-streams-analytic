@@ -1,0 +1,82 @@
+version: ‘3.7'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+    depends_on:
+      - kafka
+
+  connect:
+    image: confluentinc/cp-kafka-connect:latest
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: 'kafka:9092'
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: qontak-room-streams-analytic
+      CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONNECT_PLUGIN_PATH: /usr/share/java/,/usr/share/kafka/plugins/
+    volumes:
+      - ./kafka-connect/plugins:/usr/share/kafka/plugins/
+
+  postgresdb:
+    container_name: postgresdb
+    image: 'postgres:10.11'
+    volumes:
+      - 'postgres10_11-data:/var/lib/postgresql/data'
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: hub_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+volumes:
+  postgres10_11-data: null
