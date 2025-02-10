@@ -2,7 +2,7 @@
 
 ## Architecture
 
-![Diagram](Kafka streams.png)
+![Diagram](Kafka-streams.png)
 
 ## Topology
 
