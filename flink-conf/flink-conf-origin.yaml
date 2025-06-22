@@ -57,7 +57,7 @@ metrics.reporter.prom.port: 9249
 env.java.opts: --add-opens java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED
 
 # Enable S3 filesystem plugin
-s3.access-key: AKIARWPFIK5LGAVYG5GY
-s3.secret-key: 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
+s3.access-key:
+s3.secret-key:
 s3.endpoint: s3.amazonaws.com
 s3.path.style.access: true
