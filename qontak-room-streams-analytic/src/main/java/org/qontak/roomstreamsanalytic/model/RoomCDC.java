@@ -28,12 +28,28 @@ public class RoomCDC {
         private String id;
         private String name;
         private String status;
+        private String type;
+
+        @JsonProperty("channel_integration_id")
+        private String channelIntegrationId;
+
+        @JsonProperty("account_uniq_id")
+        private String accountUniqId;
+
+        @JsonProperty("organization_id")
+        private String organizationId;
 
         @JsonProperty("created_at")
         private ZonedDateTime createdAt;
 
-        @JsonProperty("organization_id")
-        private String organizationId;
+        @JsonProperty("updated_at")
+        private ZonedDateTime updatedAt;
+
+        @JsonProperty("division_id")
+        private String divisionId;
+
+        @JsonProperty("is_blocked")
+        private Boolean isBlocked;
     }
 
     @Override

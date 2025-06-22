@@ -9,7 +9,7 @@ import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.qontak.roomstreamsanalytic.model.RoomCDC;
-import org.qontak.roomstreamsanalytic.model.RoomStatusEvent;
+import org.qontak.roomstreamsanalytic.model.RoomEvent;
 import org.qontak.roomstreamsanalytic.processor.RoomCreatedAtTimestampExtractor;
 import org.qontak.roomstreamsanalytic.serdes.JsonSerdes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-@Component
+// @Component
 public class TransformRoomCdcTopology {
 
-    @Autowired
+    // @Autowired
     public void topology(StreamsBuilder streamsBuilder) {
         KStream<String, RoomCDC> roomCdcStreams = streamsBuilder
                 .stream(
@@ -39,12 +39,23 @@ public class TransformRoomCdcTopology {
                 })
                 .peek((k, v) -> System.out.printf("\nPeek filtered room cdc events. Key: %s, Value: %s\n", k, v));
 
-        KTable<String, RoomStatusEvent> roomStatusEvents = roomCdcStreams
-                .mapValues((v) -> new RoomStatusEvent(v.getAfter().getId(), v.getAfter().getName(), v.getAfter().getStatus(), v.getAfter().getOrganizationId()))
+        KTable<String, RoomEvent> roomEvents = roomCdcStreams
+                .mapValues((v) -> new RoomEvent(
+                        v.getAfter().getId(),
+                        v.getAfter().getName(),
+                        v.getAfter().getStatus(),
+                        v.getAfter().getType(),
+                        v.getAfter().getChannelIntegrationId(),
+                        v.getAfter().getAccountUniqId(),
+                        v.getAfter().getOrganizationId(),
+                        v.getAfter().getDivisionId(),
+                        v.getAfter().getIsBlocked(),
+                        v.getAfter().getUpdatedAt().toInstant().toEpochMilli()
+                ))
                 .toTable(
-                        Materialized.<String, RoomStatusEvent, KeyValueStore<Bytes, byte[]>>as("room-status-events")
+                        Materialized.<String, RoomEvent, KeyValueStore<Bytes, byte[]>>as("room-events")
                                 .withKeySerde(Serdes.String())
-                                .withValueSerde(JsonSerdes.RoomStatusEvent())
+                                .withValueSerde(JsonSerdes.RoomEvent())
                 );
     }
 }

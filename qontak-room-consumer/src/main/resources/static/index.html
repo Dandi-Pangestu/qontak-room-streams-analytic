@@ -62,6 +62,29 @@
     </div>
 </div>
 
+<br>
+<br>
+<br>
+<br>
+
+<h1>Real-Time Custom View</h1>
+<div class="container">
+    <div class="status-column">
+        <div class="status-title">Custom View 1 (63875502-1a89-433c-9e92-148e94f38ab3)</div>
+        <div id="63875502-1a89-433c-9e92-148e94f38ab3" class="status-value assigned">0</div>
+    </div>
+
+    <div class="status-column">
+        <div class="status-title">Custom View 2 (8964b3f7-e592-48b3-914c-cd4559dd6f2a)</div>
+        <div id="8964b3f7-e592-48b3-914c-cd4559dd6f2a" class="status-value unassigned">0</div>
+    </div>
+
+    <div class="status-column">
+        <div class="status-title">Custom View 3 (e2fa672a-bdb7-4147-8c8b-5de9327e6cdd)</div>
+        <div id="e2fa672a-bdb7-4147-8c8b-5de9327e6cdd" class="status-value resolved">0</div>
+    </div>
+</div>
+
 <script>
     const socket = new SockJS('http://localhost:8090/ws');  // Connect to STOMP WebSocket endpoint
     const stompClient = Stomp.over(socket);
@@ -84,10 +107,33 @@
                 updateStatus('resolved', data.value);
             }
         });
+
+        // Subscribe to real-time custom view 1
+        stompClient.subscribe('/topic/custom-view-count/63875502-1a89-433c-9e92-148e94f38ab3', function (message) {
+            const data = JSON.parse(message.body);
+            updateCount('63875502-1a89-433c-9e92-148e94f38ab3', data.count)
+        });
+
+        // Subscribe to real-time custom view 2
+        stompClient.subscribe('/topic/custom-view-count/8964b3f7-e592-48b3-914c-cd4559dd6f2a', function (message) {
+            const data = JSON.parse(message.body);
+            updateCount('8964b3f7-e592-48b3-914c-cd4559dd6f2a', data.count)
+        });
+
+        // Subscribe to real-time custom view 3
+        stompClient.subscribe('/topic/custom-view-count/e2fa672a-bdb7-4147-8c8b-5de9327e6cdd', function (message) {
+            const data = JSON.parse(message.body);
+            updateCount('e2fa672a-bdb7-4147-8c8b-5de9327e6cdd', data.count)
+        });
     });
 
     function updateStatus(statusType, count) {
         const element = document.getElementById(statusType);
+        element.textContent = count !== undefined ? count : 0;
+    }
+
+    function updateCount(id, count) {
+        const element = document.getElementById(id);
         element.textContent = count !== undefined ? count : 0;
     }
 </script>

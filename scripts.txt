@@ -10,6 +10,16 @@ kafka-streams-application-reset \
   --input-topics room-streams-analytic-dev-room-status-events-changelog \
   --bootstrap-servers kafka:9092
 
+kafka-streams-application-reset \
+--application-id room-streams-analytic-dev \
+--input-topics room-streams-analytic-dev-room-events-changelog \
+--bootstrap-servers kafka:9092
+
+kafka-streams-application-reset \
+--application-id room-streams-analytic-dev \
+--input-topics room-streams-analytic-dev-org-custom-views-changelog \
+--bootstrap-servers kafka:9092
+
 --- RESET ---
 
 
@@ -29,5 +39,24 @@ kafka-console-consumer --bootstrap-server kafka:9092 \
   --topic room-status-count \
   --from-beginning
 
+kafka-console-consumer --bootstrap-server kafka:9092 \
+  --topic custom-view-aggregates \
+  --from-beginning
+
 --- CONSUME ---
 
+--- DELETE TOPIC ---
+
+kafka-topics --bootstrap-server kafka:9092 --delete --topic room-streams-analytic-dev-room-status-store-changelog,room-streams-analytic-dev-room-events-changelog,room-events,qontak_chat.public.rooms,qontak_chat.public.custom_views,custom-views,_connect-status,_connect-offsets,_connect-configs,__consumer_offsets
+
+--- DELETE TOPIC ---
+
+
+--- CREATE TOPIC ---
+
+kafka-topics --bootstrap-server kafka:9092 --topic qontak_chat.public.rooms --create --partitions 4 --replication-factor 1
+kafka-topics --bootstrap-server kafka:9092 --topic qontak_chat.public.custom_views --create --partitions 4 --replication-factor 1
+kafka-topics --bootstrap-server kafka:9092 --topic qontak_chat.public.room-events --create --partitions 4 --replication-factor 1
+kafka-topics --bootstrap-server kafka:9092 --topic qontak_chat.public.custom-view-events --create --partitions 4 --replication-factor 1
+
+--- CREATE TOPIC ---

@@ -3,9 +3,9 @@ package org.qontak.roomstreamsanalytic.processor;
 import org.apache.kafka.streams.processor.api.*;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.qontak.roomstreamsanalytic.model.RoomStatusChange;
-import org.qontak.roomstreamsanalytic.model.RoomStatusEvent;
+import org.qontak.roomstreamsanalytic.model.RoomEvent;
 
-public class RoomStatusChangeProcessor implements FixedKeyProcessor<String, RoomStatusEvent, RoomStatusChange> {
+public class RoomStatusChangeProcessor implements FixedKeyProcessor<String, RoomEvent, RoomStatusChange> {
 
     private FixedKeyProcessorContext<String, RoomStatusChange> context;
     private KeyValueStore<String, String> stateStore;
@@ -17,9 +17,9 @@ public class RoomStatusChangeProcessor implements FixedKeyProcessor<String, Room
     }
 
     @Override
-    public void process(FixedKeyRecord<String, RoomStatusEvent> record) {
+    public void process(FixedKeyRecord<String, RoomEvent> record) {
         String roomId = record.key();
-        RoomStatusEvent currentEvent = record.value();
+        RoomEvent currentEvent = record.value();
 
         String previousStatus = stateStore.get(roomId);
         stateStore.put(roomId, currentEvent.getStatus());

@@ -9,6 +9,7 @@
     "database.password": "password",
     "database.dbname" : "hub_development",
     "database.server.name": "postgres",
+    "slot.name": "debezium_1",
     "table.include.list": "public.rooms",
     "topic.prefix": "qontak_chat",
     "snapshot.mode": "initial",

@@ -76,7 +76,7 @@ public class KafkaStreamsConfig {
                                     "cleanup.policy", "compact",
                                     "retention.ms", "7776000000"
                             )),
-                    new NewTopic(applicationId + "-room-status-events-changelog", 4, (short) 1)
+                    new NewTopic(applicationId + "-room-events-changelog", 4, (short) 1)
                             .configs(Map.of(
                                     "cleanup.policy", "compact",
                                     "retention.ms", "7776000000"

@@ -6,7 +6,7 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.*;
 import org.qontak.roomstreamsanalytic.model.OrganizationRoomStatusKey;
 import org.qontak.roomstreamsanalytic.model.RoomStatusCount;
-import org.qontak.roomstreamsanalytic.model.RoomStatusEvent;
+import org.qontak.roomstreamsanalytic.model.RoomEvent;
 import org.qontak.roomstreamsanalytic.processor.RoomStatusChangeProcessor;
 import org.qontak.roomstreamsanalytic.serdes.JsonSerdes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +20,19 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+// @Component
 public class RoomStatusTopology {
 
-    @Autowired
+    // @Autowired
     public void topology(StreamsBuilder streamsBuilder) {
-        KStream<String, RoomStatusEvent> roomStatusEvents = streamsBuilder
+        KStream<String, RoomEvent> roomEvents = streamsBuilder
                 .table(
-                        "room-streams-analytic-dev-room-status-events-changelog",
-                        Consumed.with(Serdes.String(), JsonSerdes.RoomStatusEvent())
+                        "room-streams-analytic-dev-room-events-changelog",
+                        Consumed.with(Serdes.String(), JsonSerdes.RoomEvent())
                 )
                 .toStream();
 
-        KGroupedStream<OrganizationRoomStatusKey, Long> grouped = roomStatusEvents
+        KGroupedStream<OrganizationRoomStatusKey, Long> grouped = roomEvents
                 .processValues(RoomStatusChangeProcessor::new, Named.as("room-status-change-processor"), "room-status-store")
                 .flatMap((roomId, roomStatusChange) -> {
                     List<KeyValue<OrganizationRoomStatusKey, Long>> updates = new ArrayList<>(2);
