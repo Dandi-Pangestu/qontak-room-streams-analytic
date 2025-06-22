@@ -4,7 +4,7 @@ jobmanager.rpc.address: flink-jobmanager
 state.savepoints.dir: s3://flink-data-1996/savepoints
 query.server.port: 6125
 state.backend.rocksdb.thread.num: 4
-s3.secret-key:
+s3.secret-key: PaEcXuhwGfifPJS8wf7FQ0RYWpJoQjyhigsil2lF
 taskmanager.memory.framework.off-heap.size: 128m
 s3.endpoint: s3.amazonaws.com
 state.backend.rocksdb.compaction.level.num-files-compaction-trigger: 10
@@ -23,7 +23,7 @@ jobmanager.memory.process.size: 1g
 rest.port: 8081
 execution.checkpointing.interval: 3min
 execution.checkpointing.timeout: 10m
-s3.access-key:
+s3.access-key: AKIARWPFIK5LGAVYG5GY
 state.backend.rocksdb.compaction.style: LEVEL
 execution.checkpointing.externalized-checkpoint-retention: RETAIN_ON_CANCELLATION
 taskmanager.memory.framework.heap.size: 128m
