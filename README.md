@@ -1,10 +1,24 @@
 # Qontak Room Stream Analytic
 
-## Architecture
+## Architecture (with Apache Flink & Clickhouse)
+
+![Diagram](Flink-architecture.png)
+
+### Flink Jobs
+
+![Diagram](flink-job-1.png)
+
+![Diagram](flink-job-2.png)
+
+![Diagram](flink-job-3.png)
+
+---
+
+## Architecture (with Kafka Streams)
 
 ![Diagram](Kafka-streams.png)
 
-## Topology
+### Topology
 
 ```text
 (Source: qontak_chat.public.rooms)
